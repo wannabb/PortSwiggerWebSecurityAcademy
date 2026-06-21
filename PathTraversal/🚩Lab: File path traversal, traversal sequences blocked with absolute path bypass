@@ -1,0 +1,19 @@
+#🚩Lab: File path traversal, traversal sequences blocked with absolute path bypass
+
+Path traversal(경로 탐색) 취약점에 대한 방어로 ../를 필터링하고 있다.
+해당 랩에서는 경로 탐색 취약점을 통하여 민감한 파일인 `/etc/passwd`를 요청해야 한다.
+
+### 🔍 분석 및 공격 과정
+1. 웹 페이지에서 입력받는 파라미터의 파일 이미지 `var/www/images`에서 가져온다고 가정하자.
+2. 버프스위트의 Intercept 기능을 사용하여 기존의 요청 패킷을 가로챈다. 
+  * `GET /image?filename=1.jpg HTTP/2`
+3. 여기서 traversal sequences는 block하고 있고, 파일경로를 상대경로로 받고 있다.
+4. /etc/passwd를 직접적으로 절대경로로 준다면 우회가능하다.
+  * `GET /image?filename=/etc/passwd HTTP/2`
+
+### 💡 취약점 원리
+서버가 `../` 같은 상대 경로 순회 시퀀스만 필터링하고 있을 때, 파일명을 절대 경로로 넘겨버리면 방어 로직을 우회할 수 있다.
+
+웹 서버는 내부적으로 지정된 이미지 디렉토리(`var/www/images`) 뒤에 사용자의 입력값을 결합하는데,
+입력값에 `/etc/passwd`라는 절대 경로가 들어오면 파일 시스템이 앞의 경로를 무시하거나 `var/www/images//etc/passwd`를 그대로 최상위 루트 경로인
+`/etc/passwd`로 해석하여 처리해 버리기 때문에 취약점이 발생한다.
