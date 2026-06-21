@@ -1,0 +1,19 @@
+#🚩Lab: File path traversal, traversal sequences stripped with superfluous URL-decode
+
+Path traversal(경로 탐색) 취약점에 대한 방어로  path traversal sequences를 필터링하고 있다.
+etc/passwd 파일을 요청해야한다. 
+
+### 🔍 분석 및 공격 과정
+1. 절대경로 시도 -> 실패
+2. 중첩된 traversal sequences -> 실패
+3. URL 이중인코딩 -> 성공
+  `GET /image?filename=%252E%252E%252F%252E%252E%252F%252E%252E%252Fetc/passwd HTTP/2`
+
+### 💡 취약점 원리
+ 이중 url인코딩을 통해 우회가 가능한 이유는 필터링단에서 1차적으로 인코딩했을때는
+`%2E%2E%2F%2E%2E%2F%2E%2E%2Fetc/passwd`가 되어 `../`가 보이지 않아 통과하게되고,
+필터링을 통과후 개발자의 실수로 코드내에서 한번 더 디코딩하게 된다면(Superfluous URL-decode) 이때
+숨겨져 있던 `../../../`가 디코딩되어 드러나게 되면서 최종경로는 `../../../etc/passwd`가 된다.
+
+
+
