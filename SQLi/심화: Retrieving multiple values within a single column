@@ -1,0 +1,13 @@
+#Retrieving multiple values within a single column
+
+ UNION attack시 반드시 3개의 값을 받아오기 의해 3개의 열이 필요한건 아니다. concatenation을 통해 복수의 값을
+하나의 열에 묶어서 받을 수 있다. 
+>>> ' UNION SELECT username || '~' || password FROM users--
+ 다음과 같이 single column에 username, password로 2개의 값을 같이 받을 수 있다. 중간에 있는 ~는 가독성을 위해 추가한 것이다.
+
+당연히 DB의 종류에 따라 concatenation의 방법은 달라질 수 있다.
+
+Oracle: 'id||pw
+Microsoft: id+pw
+PostgreSQL: id||pw
+MySQL: CONCAT(id, pw) 혹은 id pw
