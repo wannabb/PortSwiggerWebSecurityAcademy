@@ -1,0 +1,28 @@
+#SQLi Union attacks
+
+SQLi에 대해 취약한 웹 애플리케이션에서 UNION 연산자를 이용하여 다른 테이블의 데이터를 검색하는 공격.
+UNION 같은 경우는 SELECT 쿼리에 이어져 SELECT 쿼리를 한번 더 수행할 수 있도록 하는 키워드이다.
+
+>>> 주의해야 할 사항
+1. UNION은 앞 절 과 뒷 절의 열 수 가 일치해야함.
+2. UNIONdms 앞 절과 뒷 절의 열의 타입이 각각 일치해야함.
+
+>>> 실제 사용
+ 앞 절과 뒷 절의 열 수를 파악하기 의해 ORDER BY 키워드를 이용해 열의 수를 파악하거나 SELECT NULL을 이용해 파악가능하다.
+예를 들어보자. 만약 앞 절이 SELECT a, b, c FROM table1이 있다 하자.
+
+1) ORDER BY: SELECT a, b, c FROM table1 ORDER BY 1 (a열을 기준으로 정렬),  SELECT a, b, c FROM table1 ORDER BY 2 (b열을 기준으로 정렬),
+ SELECT a, b, c FROM table1 ORDER BY 3 (c열을 기준으로 정렬),  SELECT a, b, c FROM table1 ORDER BY 4 (4열은 없기에 에러!!) 
+ 이런 방식으로 열의 수를 파악해볼 수 있다.
+
+2) NULL: SELECT a, b, c FROM table1 UNION SELECT NULL FROM table2 (에러), SELECT a, b, c FROM table1 UNION SELECT NULL, NULL FROM table2(에러)
+ SELECT a, b, c FROM table1 UNION SELECT NULL, NULL, NULL FROM table2(작동) 이렇게 NULL의 수를 늘려가며 열의 갯수를 파악 해볼 수도 있다.
+
+ 이 후에는 어떤 열의 타입이 string인지 파악한다.
+  SELECT a, b, c FROM table1 UNION SELECT 'a', NULL, NULL FROM table2 이런식으로 NULL 자리에 string값을 하나씩 넣어보며 어느 열이 string인지 파악한다.
+
+그 후 원하는 테이블의 컬럼을 가져올 수 있다.
+ SELECT a, b, c FROM table1 UNION SELECT user_id, user_passwd, NULL FROM table2
+
+
+
