@@ -1,0 +1,19 @@
+#Lab: SQL injection UNION attack, finding a column containing text
+
+This lab contains a SQL injection vulnerability in the product category filter.
+The results from the query are returned in the application's response, so you can use a UNION attack to retrieve data from other tables. 
+To construct such an attack, you first need to determine the number of columns returned by the query. You can do this using a technique you learned in a previous lab. 
+The next step is to identify a column that is compatible with string data.
+The lab will provide a random value that you need to make appear within the query results. 
+To solve the lab, perform a SQL injection UNION attack that returns an additional row containing the value provided.
+This technique helps you determine which columns are compatible with string data.
+
+
+### 🔍 분석 및 공격 과정
+1. 일단, `category=Gifts%27UNION%20SELECT%20NULL--` 에서 NULL의 갯수를 1개씩 늘려가며 column의 수를 파악한다.
+ ->` category=Gifts%27UNION%20SELECT%20NULL,%20NULL,%20NULL--`
+2. NULL 자리에 대신 'a'를 넣어보며 문자열 타입인 열을 찾아낸다.
+ -> `category=Gifts%27UNION%20SELECT%20NULL,%20%27a%27,%20NULL--` , 2번째 열이 문자열
+3. 해당 랩에서 `ItRqqs`를 가져와야 성공이다. 
+ -> `category=Gifts%27UNION%20SELECT%20NULL,%20%27ItRqqs%27,%20NULL--`
+4. **solve**
