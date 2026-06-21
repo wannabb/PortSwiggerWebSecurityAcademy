@@ -1,0 +1,17 @@
+# 🚩 Lab: File path traversal, simple case
+
+Path traversal(경로 탐색) 취약점에 대한 아무런 방어가 구현되어 있지 않은 랩이다. 
+해당 랩에서는 경로 탐색 취약점을 통하여 민감한 파일인 `/etc/passwd`를 요청해야 한다.
+
+### 🔍 분석 및 공격 과정
+1. 웹 페이지에서 입력받는 파라미터의 파일 이미지를 `/var/www/images/`에서 가져온다고 가정하자.
+2. 버프스위트(Burp Suite)의 **Intercept** 기능을 활용하여 기존의 이미지 요청 패킷을 가로챈다.
+   * `GET /image?filename=1.jpg HTTP/2`
+3. 여기서 `filename` 파라미터의 값을 `../../../etc/passwd`로 변경하여 전송한다.
+
+### 💡 취약점 원리
+서버 내부적으로 경로가 다음과 같이 조합되면서 최상위 디렉토리로 탈출하게 된다.
+* **조합된 경로:** `/var/www/images/../../../etc/passwd`
+* **최종 연산 경로:** `/etc/passwd`
+
+버프스위트 **Repeater**에서 결과를 확인해 보면, 서버가 조작된 경로를 그대로 실행하여 `passwd` 파일을 성공적으로 반환한 것을 확인할 수 있다.
