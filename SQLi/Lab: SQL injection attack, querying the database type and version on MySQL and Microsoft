@@ -1,0 +1,19 @@
+#🚩Lab: SQL injection attack, querying the database type and version on MySQL and Microsoft
+
+This lab contains a SQL injection vulnerability in the product category filter. 
+You can use a UNION attack to retrieve the results from an injected query.
+To solve the lab, display the database version string.
+
+### 🔍 분석 및 공격 과정
+1. 문제제목에서 볼 수 있다시피 해당 애플리케이션은 MySQL을 이용하고 있다.
+2. 따라서 DB의 버전을 얻기 위해 SELECT @@version 을 사용해 볼 수 있다. (@@version은 DB의 버전, 타입을 담은 시스템변수)
+3. 카테고리 필터에 SQLi 수행가능.
+4. MySQL이기에 `--%20` 혹은 `#`으로 주석처리해야함. (MySQL, MariaDB의 주석 특징임)
+5. `UNION SELECT NULL--%20` 에서 시작하여 NULL 갯수를 늘려가며 컬럼수 추론 -> 2개
+6. `category=Pets%27UNION%20SELECT%20%27a%27,%20NULL--%20` -> 첫번째 컬럼은 스트링데이터를 받음.
+7. `category=Pets%27UNION%20SELECT%20@@version,%20NULL--%20` -> solve
+
+
+### 💡 취약점 원리
+취약점이 존재하는 entrypoint: category
+수행 공격: UNION attacks
