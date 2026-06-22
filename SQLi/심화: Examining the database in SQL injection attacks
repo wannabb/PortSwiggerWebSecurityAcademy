@@ -1,0 +1,37 @@
+#Examining the database in SQL injection attacks
+
+ SQL injection을 수행하기 위해, 다음과 같은 database에 대한 정보를 찾는 것은 중요하다:
+1) 데이터베이스의 타입과 버전.
+2) 데이터베이스가 포함하는 테이블들과 컬럼들.
+
+ 1)에 해당하는 정보를 얻기 위해 다음과 같은 쿼리를 사용할 수 있다.
+Microsoft, MySQL: SELECT @@version
+Oracle: SELECT * FROM v$version
+PostgreSQL: SELECT version()
+
+ 2)에 해당하는 정보를 얻기 위해 다음과 같은 쿼리를 순서대로 사용할 수 있다. (단, Oracle의 경우는 다름)
+
+information_schema는 DB에 대한 정보를 제공하는 메타데이터이다. 디스크에 물리적으로 존재하지는 않고 사용자가
+SELECT 쿼리를 날리는 순간 DB 엔진이 메모리에서 뼈대를 끄집어내어 실시간으로 보여주는 것이다. 
+
+SELECT * FROM information_schema.tables
+
+위의 쿼리문을 실행하면 TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE이 반환된다.
+TABLE_NAME 컬럼을 통해 TABLE의 이름을 알아낸 이후에는 해당 테이블의 컬럼을 질의해볼 수 있다.
+
+SELECT * FROM information_schema.columns where table_name = '테이블 이름'
+
+위의 쿼리문을 실행하면 TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE을 반환한다.
+
+
+###추가 정리
+TABLE_CATALOG -> TABLE_SCHEMA -> TABLE - COLUMN (포함 관계)
+TABLE_CATALOG: 데이터베이스 인스턴스 전체를 뜻한다.
+TABLE_SCHEMA: 흔히 말하는 데이터베이스 이름이 바로 이 스키마이다. (EX: shopping_db, test_db...)
+TABLE_TYPE: 해당 테이블이 사용자가 만든 일반 테이블인지 아니면 시스템이 보여주는 가상테이블(VIEW)인지 알려줌.
+ 만약 가상 테이블을 필터링하고 싶다면 `WHERE table_type = 'BASE TABLE'`을 사용하면 됩니다.
+
+
+
+
+
