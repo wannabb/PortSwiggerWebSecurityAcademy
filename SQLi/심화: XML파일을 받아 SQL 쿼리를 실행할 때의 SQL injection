@@ -1,0 +1,14 @@
+#심화: XML파일을 받아 SQL 쿼리를 실행할 때의 SQL injection
+
+ 이전에는 query string에 직접적으로 인젝션 페이로드를 주입했었다. 그러나 사실 SQL injection은 SQL query가 실행되는 곳
+어디든 주입이 가능할 수 있다. 예를 들어 웹사이트가 입력으로 JSON이나 XML을 받아 그것을 DB에 질의하는데 사용할 수 있다.
+ 이런 다양한 포맷은 WAF나 방어 메커니즘을 우회하는 방법을 제공할 수 있다. 만약 SQL injection 키워드를 요청에서 필터링 한다고 해보자.
+SELECT를 필터링할때 XML파일을 SQL query의 입력으로 이용한다면 XML 인코딩을 통하여 `S`를 `&#x53`으로 인코딩해 보내는 식으로 우회해볼 수 있다.
+
+>>> <stockCheck>   --XML 파일
+        <productId>123</productId>
+        <storeId>999 &#x53;ELECT * FROM information_schema.tables</storeId>
+    </stockCheck> (개념만 보여줄려고 간단하게 표현)
+
+ WAF단에서는 인코딩되어있는 상태로 읽기에 SELECT를 필터링 하지 못하고 웹 서버로 넘긴다.
+웹서버에서는 `&#x53`이 디코딩되어 SELECT가 되어버린다.  
