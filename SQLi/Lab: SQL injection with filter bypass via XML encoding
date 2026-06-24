@@ -1,0 +1,35 @@
+#Lab: SQL injection with filter bypass via XML encoding
+
+This lab contains a SQL injection vulnerability in its stock check feature. 
+The results from the query are returned in the application's response, 
+so you can use a UNION attack to retrieve data from other tables.
+The database contains a users table, which contains the usernames and passwords of registered users. 
+To solve the lab, perform a SQL injection attack to retrieve the admin user's credentials, 
+then log in to their account.
+
+### 🔍 분석 및 공격 과정
+1. stock check feature에 취약점이 있다. 버프로 재고를 조사할 때의 패킷을 살펴보니, XML 포맷으로 전송중.
+2. <storeid> 태그가 SQL query로 작동하는 체크해보기 위해 값을 바꿔보았다. 기존에 2였던 숫자를 1로 바꾸니 재고수가 달라짐.
+3. 아마 숫자형일거라 생각되는데 확인해보기 위해 수식도 넣어보았아 `1+1`로 대체. 2일때 같은 재고 값 조회. -> 숫자형
+4. 따라서 페이로드는 다음과 같이 작성됨 
+ >>> 2 UNION ~~~
+5. 일단 컬럼 수를 맞춰야하니까 ORDER BY를 먼저 써봄
+ >>> 2 ORDER BY 1  -정상
+ >>> 2 ORDER BY 2  =재고가 0으로 표시.
+ 해당 변화로 보아 컬럼 수는 1개. 타입형은 당연히 스트링 데이터일 것.
+6. 이제 password를 가져오는 페이로드를 짜보자.
+ >>> 2 UNION SELECT password FROM users WHERE username = 'administrator'
+ -> attack 감지됨. 필터링이 작동중임.
+7. 필터링을 우회하기 위해 XML인코딩으로 난독화해보자. 버프의 `Hackvector` 익스텐션을 사용하였다. 
+ WAF나 필터링 서명은 UNION, SELECT, `'`를 검사하지만 XML 파서가 백엔드에서 데이터를 처리하기 전에 XML엔티티를 먼저 디코딩
+ 하기에 필터링을 우회할 수 있는 원리이다.
+ >>> &#x32;&#x20;&#x55;&#x4e;&#x49;&#x4f;&#x4e;&#x20;&#x53;&#x45;&#x4c;&#x45;&#x43;&#x54;&#x20;&#x70;&#x61;&#x73;&#x73;&#x77;
+&#x6f;&#x72;&#x64;&#x20;&#x46;&#x52;&#x4f;&#x4d;&#x20;&#x75;&#x73;&#x65;&#x72;&#x73;&#x20;&#x77;&#x68;&#x65;&#x72;&#x65;&#x20;
+&#x75;&#x73;&#x65;&#x72;&#x6e;&#x61;&#x6d;&#x65;&#x3d;&#x27;&#x61;&#x64;&#x6d;&#x69;&#x6e;&#x69;&#x73;&#x74;&#x72;&#x61;&#x74;
+&#x6f;&#x72;&#x27;
+8. 응답에 비밀번호가 나오는걸 볼 수 있음 -> 로그인 -> solve
+
+### 방어 기법
+1. Prepared statement 사용. (가장 확실함)
+2. WAF단의 검증에 의존하지 말고 백엔드에서도 검증을 해야함. 
+3. WAF의 XML 디코딩 기능 활성화.
