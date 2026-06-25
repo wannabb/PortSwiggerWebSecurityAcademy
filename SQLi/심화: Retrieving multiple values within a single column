@@ -7,7 +7,7 @@
 
 당연히 DB의 종류에 따라 concatenation의 방법은 달라질 수 있다.
 
-Oracle: 'id||pw
+Oracle: id||pw
 Microsoft: id+pw
 PostgreSQL: id||pw
 MySQL: CONCAT(id, pw) 혹은 id pw
