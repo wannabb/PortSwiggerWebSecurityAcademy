@@ -22,11 +22,9 @@
 >>> SQLi 적용된 쿼리 SELEcT * from us13 where id = 'admin'--' pw = '아무값'  <- `--`는 주석이기에 pw부분은 무시된다.
 >>> OR 1=1 같은 조건은 테스트함에 있어서 매우 주의를 기울여야한다. 만약 SQL 쿼리가 UPDATE까지 이어진다면 모든 데이터베이스를 날려버리는 대참사까지 이어질 수도 있다.
 
-## 3.대응 방안 (Mitigation)
-- PreparedStatement를 사용하면 근본적으로 해결이 가능하다. PreparedStatement란 파라미터화된 쿼리를 뜻하는데,
-  DB는 구문 기호(?)가 들어간 SQL 구조를 먼저 컴파일하여 고정해두고 그 후에 사용자가 ' OR '1'='1을 입력하더라도, 
-  DB는 이를 명령어가 아닌 단순한 '문자열 덩어리'로만 인식하기 때문에 안전하다.
->>> SELECT * FROM users WHERE username = ? AND password = ?; 
 
-## 4. 참고 자료 (References)
+## 3. 참고 자료 (References)
 - https://portswigger.net/web-security/learning-paths/sql-injection
+
+
+
