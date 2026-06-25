@@ -1,0 +1,31 @@
+#How to prevent SQL injection 
+
+ 사실상 제일 핵심이 되는 파트. 그렇다면 SQL injection을 어떻게 막는가??
+
+1. string concatenation 대신 Parameterized query(well known as Prepared Statements)를 사용한다. 
+이렇게 하면 대부분의 SQL injection 은 방어가 가능하다. 
+
+  String query = "SELECT * FROM products WHERE category = '"+ input + "'";
+  Statement statement = connection.createStatement();
+  ResultSet resultSet = statement.executeQuery(query); >>> concatenation방식이라 SQLi에 취약함.
+  
+  PreparedStatement statement = connection.prepareStatement("SELECT * FROM products WHERE category = ?"); # (하드코딩)
+  statement.setString(1, input); # 첫번째 퀘스쳔마크에 input을 `문자열`로 집어 넣음. 
+  ResultSet resultSet = statement.executeQuery(); >>>  prepared statements를 사용하여 SQLi 방어
+
+2. Prepared statements의 경우, WHERE, INSERT, UPDATE에서만 쓸 수 있고 그 이외의 table_name이라던지, column_name나 ORDER BY절 등에서는
+ 화이트리스트를 통해 입력값을 검증한다. 혹은 요구되는 동작을 구현하기 위해 다른 로직을 사용한다.
+
+  if ("1".equals(input)) {   >>> 요구되는 동작을 구현하기 위해 다른 로직을 사용하는 예시
+    sortOrder = "price ASC";  // 개발자가 직접 하드코딩한 안전한 문자열
+  } else if ("2".equals(input)) {
+    sortOrder = "date DESC";   // 개발자가 직접 하드코딩한 안전한 문자열
+  } else {
+    sortOrder = "id DESC";     // 기본값 (비정상적인 입력이 들어오면 여기로 처리)
+  } 
+
+  // 최종 쿼리 조립 (사용자 입력이 아닌, 서버가 내부에서 선택한 안전한 변수만 조합됨)
+  String query = "SELECT * FROM products ORDER BY " + sortOrder;
+  PreparedStatement statement = connection.prepareStatement(query);     
+
+
