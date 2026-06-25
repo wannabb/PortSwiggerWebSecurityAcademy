@@ -1,0 +1,38 @@
+#심화: Oracle information schema
+
+ Oracle에는 Information_schema는 없으나 동일한 기능을 수행하는 VIEW가 따로 구현되어 있다.
+VIEW는 원본 테이블들을 사용자가 보기 편하게 가공해서, 마치 하나의 테이블인 것처럼 가상으로 보여주는 껍데기.
+테이블과는 다르게 실제 데이터를 가지고 있지 않다. 원본 테이블들을 알아서 조인하고 복잡한 계산을 거친 결과만
+띄워주는 것이다.
+
+
+
+1) 사용자 계정이 접근 가능한 모든 테이블 또는 객체 조회 (all_)
+
+  all_tables: 테이블에 대한 메타데이터. 
+    - TABLE_NAME(VARCHAR2), OWNER(VARCHAR2)
+  all_tab_comments: 테이블이나 뷰에 작성된 주석 조회하는 뷰. 
+    - TABLE_NAME(VARCHAR2), TABLE_TYPE(VARCHAR2), COMMENTS(VARCHAR2), OWNER(VARCHAR2)
+  all_objects: 테이블뿐만 아니라 인덱스, 프로시저, 함수, 뷰 등 Oracle 안의 모든 객체(Object)의 메타데이터 총집합
+    - OBJECT_NAME(VARCHAR2), OBJECT_TYPE(VARCHAR2), STATUS(VARCHAR2), OWNER(VARCHAR2)
+
+2) 사용자 계정에 생성된 모든 테이블 또는 객체 조회, 즉 자기 소유 테이블, 객체 (user_)
+
+  user_tables: 테이블에 대한 메타데이터. 
+    - TABLE_NAME(VARCHAR2)
+  user_tab_comments: 테이블이나 뷰에 작성된 주석 조회하는 뷰. 
+    - TABLE_NAME(VARCHAR2), TABLE_TYPE(VARCHAR2), COMMENTS(VARCHAR2)
+  user_objects: 테이블뿐만 아니라 인덱스, 프로시저, 함수, 뷰 등 Oracle 안의 모든 객체(Object)의 메타데이터 총집합
+    - OBJECT_NAME(VARCHAR2), OBJECT_TYPE(VARCHAR2), STATUS(VARCHAR2)
+3) 관리자(DBA) 권한으로 모든 테이블 또는 객체 조회 (dba_)
+
+  dba_tables: 테이블에 대한 메타데이터. 
+    - TABLE_NAME(VARCHAR2), OWNER(VARCHAR2)
+  dba_tab_comments: 테이블이나 뷰에 작성된 주석 조회하는 뷰. 
+    - TABLE_NAME(VARCHAR2), TABLE_TYPE(VARCHAR2), COMMENTS(VARCHAR2), OWNER(VARCHAR2)
+  dba_objects: 테이블뿐만 아니라 인덱스, 프로시저, 함수, 뷰 등 Oracle 안의 모든 객체(Object)의 메타데이터 총집합
+    - OBJECT_NAME(VARCHAR2), OBJECT_TYPE(VARCHAR2), STATUS(VARCHAR2), OWNER(VARCHAR2)
+
+
+
+MEMO: 함수 VS 프로시저: 함수는 결과를 반환하는 것이 목표, 프로시저는 특정값을 반환하기보다는 일련의 절차를 한번에 수행하는 것이 목표.
