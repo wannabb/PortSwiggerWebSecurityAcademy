@@ -1,0 +1,15 @@
+#Lab: Basic SSRF against another back-end system
+
+This lab has a stock check feature which fetches data from an internal system.
+To solve the lab, use the stock check functionality to scan the internal 192.168.0.X range for an admin interface on port 8080,
+then use it to delete the user carlos.
+
+### 🔍 분석 및 공격 과정
+1. 조직의 사설 IP인 192.168.0.x (1-254) 범위에  admin interface가 존재하며 8080포트에서 리스닝한다. 
+2. proxy기능으로 POST 메서드로 스톡을 조회하는 패킷을 캡처한다.
+3. 인트루더로 보내 192.168.0.$1-254$ 로 sniper attak실시.
+4. 상태코드가 200인 주소 발견. 192.168.0.210
+5. 응답 HTML 페이지를 살펴보니 user들을 delete하는 링크가 a태그로 걸려있음.
+6. 관리자 권한에서 실행가능하기에, 또 다시 SSRF 공격을 통해 서버에서 실행하도록 요청을 보냄.
+7. stockAPI = http://192.168.0.210:8080/admin/delete?username=carlos 
+8. solve
