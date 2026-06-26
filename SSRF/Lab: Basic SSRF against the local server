@@ -1,0 +1,11 @@
+#Lab: Basic SSRF against the local server
+
+This lab has a stock check feature which fetches data from an internal system.
+To solve the lab, change the stock check URL to access the admin interface at 
+http://localhost/admin and delete the user carlos.
+
+### 🔍 분석 및 공격 과정
+1. 그냥 stockAPI의 값으로 http://localhost/admin 요청
+2. HTTP응답 살펴보니, user들을 delete하는 API 엔드포인트가 노출.
+3. 해당링크로 다시 SSRF 수행.
+4. solve
