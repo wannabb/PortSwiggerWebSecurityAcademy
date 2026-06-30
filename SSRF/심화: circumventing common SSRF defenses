@@ -1,0 +1,27 @@
+#심화: circumventing common SSRF defenses
+
+Case 1) 127.0.0.1, localhost or sensitive URLs like /admin
+  -> 127.0.0.1 대신 2130706433(10진수표현), 017700000001(8진수표현),0x7f000001(16진수표현) 127.1(OS가 알아서 0을 채워줌) 을 사용해 볼 수 있음.
+  -> 127.0.0.1로 Resolve 되도록 미리 등록되어있는 도메인을 사용가능: spoofed.burpcollaborator.net, localtest.me, lvh.me, customer-content.nit.google
+  -> /admin을 필터링한다면 URL encoding이나 case variation을 통해 우회 시도 가능.
+  -> 이중 URL 인코딩하여 
+
+Case 2) SSRF with whitelist-based input filters
+  -> whitelist를 통해 URL 앞에 expected-host를 강제할 경우 @를 사용해 볼 수 있음. 
+  >>> http://expected-host:fake-password@evil-host
+    URL 구조에서 `@`는 로그인을 뜻함. `@`앞에 있는 (schema 제외하고) `:`를 기준으로 각각 계정과 비밀번호가 되며 `@` 뒤에 있는 것이 실제 접속 도메인이 된다.
+  -> whitelist를 통해 URL 뒤에 expected-host를 강제할 경우 #를 사용해 볼 수 있음.
+  >>> http://evil-host#expected-host
+    URL 구조에서 `#`는 프래그먼트로, 문서의 특정 위치를 가리킴. 이건 백엔드 서버단에서 뒤의 `#`가 잘려나감.
+  -> 도메인 구조를 악용해 공격을 시도할 수도 있음.
+  >>> http://expected-host.evil-host.com 으로 요청을 보낼 시..
+    evil-host의 하위 도메인으로 이동하게 됨. 이후 공격자가 자신의 도메인에서 내부망으로 리다이렉트 시키면 우회가능.
+    ###? 여기서 한 가지 궁금점이 리다이렉트 요청은 WAF를 통과안하는지. 통과안한다. WAF는 인바운드만 검사하고 아웃바운드는 검사하지 못하기에 생기는 한계이다.
+  >>> URL인코딩으로 #, @를 인코딩, 더블인코딩해서 필터링을 후회해볼 수도 있다.
+
+Case 3) Open Redirection
+  Redirection API를 통해 악의적인 경로로 Redirection하도록 만드는 방법.
+
+
+
+
