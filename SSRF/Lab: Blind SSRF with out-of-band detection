@@ -1,0 +1,9 @@
+#Lab: Blind SSRF with out-of-band detection
+
+This site uses analytics software which fetches the URL specified in the Referer header when a product page is loaded.
+To solve the lab, use this functionality to cause an HTTP request to the public Burp Collaborator server.
+
+### 🔍 분석 및 공격 과정
+1. 프로덕트 페이지가 로드될 때, 해당 사이트의 분석 소프트웨어가 referer 헤더에 적힌 URL을 이용한다고 한다.
+2. referer 헤더의 값에 버프스위트의 콜라보레이터의 url을 집어 넣어줌.
+3. DNS 로그, HTTP 로그 찍힘. -> solve
