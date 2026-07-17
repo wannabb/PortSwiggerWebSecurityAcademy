@@ -1,0 +1,22 @@
+#🚩Lab: Web shell upload via extension blacklist bypass
+
+This lab contains a vulnerable image upload function. Certain file extensions are blacklisted, 
+but this defense can be bypassed due to a fundamental flaw in the configuration of this blacklist.
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. 
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. 로그인해서 php 파일 업로드해봄. 막힘. php는 업로드 안된다함.
+2. 그래서 그냥 이름을 이름.php.jpg 로 해봄. 그대로 업로드 되버림
+3. 응답 패킷보면 아파치 웹서버인데 혹시 .htaccess 이름도 업로드 되는지 확인해봄. -> 업로드 가능.
+4. config 파일 오버라이딩 해버려서 .ad라는 확장자는 application/x-httpd-php인 MIME를 매핑해버리자.
+5. .htaccess 파일 작성하여 업로드.
+ >> AddType application/x-httpd-php .ad
+6. 이제 웹셸도 업로드. 단 이름을 이름.ad로 업로드.
+ >> <?php echo file_get_contents("/home/carlos/secret") ?>
+7. proxy의 history탭에서 이름.ad 파일을 get한 결과를 조회. -> 플래그 획득 solve
+
+### 💡 취약점 원리
+ .htaccess 파일을 업로드 할 수 있게 만든게 근본적인 문제였음. 유저가 config파일을 업로드 하지 못하도록 구현하거나 Apache설정
+ AllowOverride를 None으로 바꿔 유저 디렉토리 내 .htaccess 변경 권한을 제한해야 함.
