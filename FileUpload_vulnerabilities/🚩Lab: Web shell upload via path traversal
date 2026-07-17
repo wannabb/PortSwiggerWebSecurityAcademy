@@ -1,0 +1,22 @@
+#🚩Lab: Web shell upload via path traversal
+
+This lab contains a vulnerable image upload function. 
+The server is configured to prevent execution of user-supplied files, but this restriction can be bypassed by exploiting a secondary vulnerability.
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret.
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. wiener로 로그인.
+2. <?php echo file_get_contents("/home/carlos/secret") ?> 업로드. 
+3. 바로 또 proxy기능의 history tab에서 업로드된 파일 get한 패킷 조회.
+4. php의 실행 결과를 가져온게 아니라 php 파일의 내용자체를 평문으로 가져옴.
+5. 아마 해당 디렉토리에서는 파일의 내용을 그대로 평문으로 주는 것같음.
+6. 파일이름을 ../파일이름.php로 바꾸어 전송
+7. 파일이름.php가 성공적으로 업로드 되었다고 돌아오는 걸 봐서는 ../이 제거되고 있는 것 같음.
+8. ../파일이름.php를 url 인코딩한 후 전송해봄. -> ../파일이름.php 가 성공적으로 업로드 되었다고 뜸.
+9. history 탭에서 업로드 파일 get하는 패킷 조회 -> 플래그 제출 solve
+
+### 💡 취약점 원리
+ 디렉토리내에서 .php가 실행되지 않도록 설정은 잘 이루어져 있었으나, 경로탐색에 대한 방어는 잘 이루어지지 않았음. 파일이름을 정규화한 후에 지정된 디렉토리를 벗어나는지
+확인하도록 보강이 필요함.
