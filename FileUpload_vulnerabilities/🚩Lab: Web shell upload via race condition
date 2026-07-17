@@ -1,0 +1,14 @@
+#🚩Lab: Web shell upload via race condition
+
+This lab contains a vulnerable image upload function. 
+Although it performs robust validation on any files that are uploaded, it is possible to bypass this validation entirely by exploiting a race condition in the way it processes them.
+To solve the lab, upload a basic PHP web shell, then use it to exfiltrate the contents of the file /home/carlos/secret. 
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. 처음 풀어보는 EXPERT 랩이라 일단 기대했으나 문제 읽고 쉬워보여 실망.
+2. 로그인 후 웹셸 업로드해봄. -> 시간 살짝 걸린 후 응답. php라 안됨
+3. 응답까지 시간이 살짝 걸린게 만약 php파일을 서버에 저장한 이후에 유효성을 검사하고 삭제하는 거라면 그 검사하는 프로세스가 끝나 php파일을 삭제하기 전에 빠르게 자원을 get해버린다면??
+4. 당시 문제를 풀때는 파이썬으로 따로 코드를 작성해서 풀었으나, burp suite에 
+### 💡 취약점 원리
