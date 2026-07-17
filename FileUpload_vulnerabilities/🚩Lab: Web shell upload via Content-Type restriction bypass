@@ -1,0 +1,22 @@
+#🚩Lab: Web shell upload via Content-Type restriction bypass
+
+This lab contains a vulnerable image upload function. 
+It attempts to prevent users from uploading unexpected file types, but relies on checking user-controllable input to verify this.
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. 
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. proxy기능을 이용하여 조작할 수 있는 값을 이용해 파일의 유효성을 검증하는 중.
+2. wiener로 로그인
+3. <?php echo file_get_contents("/home/carlos/secret") ?> 파일 업로드
+4. 컨텐츠 타입이 image/jpeg인 얘만 업로드 가능하다고 친절하게 오류로 알려줌
+5. 방금 보낸 패킷 리피터로 전송. 콘텐츠 타입을 image/jpeg로 수정.
+6. send하면 성공적으로 업로드 된걸 확인 할 수 있음.
+7. my-account 페이지로 이동후 proxy기능의 history tab을 확인하여 프로필로 업로드된 php파일 get하는 패킷확인.
+ 응답에 flag 적혀있음. -> 제출 solve
+
+### 💡 취약점 원리
+ user가 수정가능한 헤더를 이용하여 파일의 유효성을 검증하기에 조작되기도 매우 쉬운 문제가 있었음.
+
+
