@@ -1,0 +1,19 @@
+#🚩Lab: Remote code execution via web shell upload
+   
+This lab contains a vulnerable image upload function. 
+It doesn't perform any validation on the files users upload before storing them on the server's filesystem.
+To solve the lab, upload a basic PHP web shell and use it to exfiltrate the contents of the file /home/carlos/secret. 
+Submit this secret using the button provided in the lab banner.
+You can log in to your own account using the following credentials: wiener:peter
+
+### 🔍 분석 및 공격 과정
+1. 해당 랩에서는 업로드 파일에 대한 어떠한 검증도 구현되어 있지 않음. 따라서 그냥 /home/carlos/secret을 가져오는 php코드 하나 작성해서 업로드하면 끝.
+2. 일단 업로드 기능을 사용하기 위해 `wiener`로 로그인.
+3. php 코드 작성.
+ >> <?php echo file_get_contents('/home/carlos/secret') ?>
+4. php 코드 업로드.
+5. GET 메서드로 프로필 파일 접근.
+6. '/home/carlos/secret' 가 성공적으로 출력됨. -> solve
+
+### 💡 취약점 원리
+ 업로드 기능만 구현되어 있지 파일 타입에 대한 검증이 전혀 없기에 php코드를 업로드 해버리고 서버측에서 실행시켜 그 결과를 그대로 받아온다.
