@@ -328,10 +328,10 @@ def handleResponse(req, interesting):
     table.add(req)
 ```
 8. `onresize` 이벤트 사용가능. -> `iframe` 태그의 `src`를 `<iframe src="https://0a8300fc0403a77681082092002b0037.web-security-academy.net/?search=%22%3E%3Cbody%20onresize=print()%3E" onload=this.style.width='100px'>`
--이때 src앞에 붙은 `">`는 사용자의 입력값이 <h1>같은 태그 안에 들어가는 단순한 `html context`라면 없어도 무방하지만, tag의 attribute에 들어간다면 `">`로 제대로 닫아 주고 다음 태그를 호출해야한다. 그런 의미에서 붙은 관습적인 페이로드.
+9. 이때 src앞에 붙은 `">`는 사용자의 입력값이 <h1>같은 태그 안에 들어가는 단순한 `html context`라면 없어도 무방하지만, tag의 attribute에 들어간다면 `">`로 제대로 닫아 주고 다음 태그를 호출해야한다. 그런 의미에서 붙은 관습적인 페이로드.
   해당 스크립트는 브라우저 창의 사이즈가 변경되면 작동하는데, `onload` 이벤트를 넣어 페이지가 로드되자 마자 창의 사이즈는 변경되고 즉시 print()가 실행됨.
-9. 피해자가 해당 `html문서`를 렌더링 하도록 유도해야함. 이 시나리오는 해당 랩의 왼쪽 상단에 있는 `Go to exploit server` 페이지에서 재현 가능.
-10. `html문서`를 패킷의 `body필드`에 실어 피해자가에 전송하면 solve. 
+10. 피해자가 해당 `html문서`를 렌더링 하도록 유도해야함. 이 시나리오는 해당 랩의 왼쪽 상단에 있는 `Go to exploit server` 페이지에서 재현 가능.
+11. `html문서`를 패킷의 `body필드`에 실어 피해자가에 전송하면 solve. 
 
 
 
