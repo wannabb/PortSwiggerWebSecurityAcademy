@@ -31,4 +31,34 @@ outputDiv.innerHTML = "선택하신 상품 ID는: " + proId + " 입니다."; // 
 - 또한 피해자 유저를 가장해 또 다른 유저에게 공격을 수행 가능. 
 
 
-## tip. DOM invader
+## tip. DOM-based XSS를 일으킬 수도 있는 sink들
+
+- document.write()
+- document.writeln()
+- document.domain
+- element.innerHTML
+- element.outerHTML
+- element.insertAdjacentHTML
+- element.onevent
+
+- jquery functions
+- add()
+- after()
+- append()
+- animate()
+- insertAfter()
+- insertBefore()
+- before()
+- html()
+- prepend()
+- replaceAll()
+- replaceWith()
+- wrap()
+- wrapInner()
+- wrapAll()
+- has()
+- constructor()
+- init()
+- index()
+- jQuery.parseHTML()
+- $.parseHTML()
