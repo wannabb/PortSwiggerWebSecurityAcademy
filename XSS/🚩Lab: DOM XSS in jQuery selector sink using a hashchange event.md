@@ -14,12 +14,13 @@ $(window).on('hashchange', function(){
 if (post) post.get(0).scrollIntoView();
 });
 </script>                  
-```
+
 2. blog-list 섹션의 h2태그 내부 내용이 hash값의 내용을 포함할 경우 그곳으로 오토 스크롤을 하는 코드이다.
 3. jQuery의 `$()`는 문법은 고전적인 문제가 있는데 만약 값으로 `<p>` 같은 새로운 태그를 입력으로 받을 경우, 해당 태그를 만들어 낸다. ( `$('p')` ) 이러한 문제는 최신버전의 jQuery에서는 수정되었다. (3.0이상)
-4. <img src=1 onerror=print()> 를 해시값으로 준다면 $('section.blog-list h2:contains(' + decodeURIComponent("<img src=1 onerror=print()>") + ')'); 가 되고 새로운 img 태그를 만들어낸다.
+   <img src=1 onerror=print()> 를 해시값으로 준다면 $('section.blog-list h2:contains(' + decodeURIComponent("<img src=1 onerror=print()>") + ')'); 가 되고 새로운 img 태그를 만들어낸다.
 5. 근데 이건 어쨋든 해쉬값이 변경되는 이벤트가 일어나야 하는데, 이는 iframe과 onload를 결합함으로써 구현할 수 있다.
-6. <iframe src='https://도메인/#' onload="this.src+=<img src=1 onerror=print()>"></iframe>
+6.  <iframe src='https://도메인/#' onload="this.src+=<img src=1 onerror=print()>"></iframe> 
+```
 
 
 ### 💡 취약점 원리
