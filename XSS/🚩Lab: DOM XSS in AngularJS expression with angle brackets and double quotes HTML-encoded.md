@@ -21,4 +21,4 @@ To solve this lab, perform a cross-site scripting attack that executes an Angula
 
 
 ### 💡 취약점 원리
- SSTI(Server-Side Template Injection). 사용자로 부터 입력받은 값을 페이지에 반영할 때에는 충분한 검증이 있어야 하는데, {{ }}에 대한 검증이 없어 우회가능했음.
+ CSTI(Client-Side Template Injection). 사용자로 부터 입력받은 값을 페이지에 반영할 때에는 충분한 검증이 있어야 하는데, {{ }}에 대한 검증이 없어 우회가능했음.
