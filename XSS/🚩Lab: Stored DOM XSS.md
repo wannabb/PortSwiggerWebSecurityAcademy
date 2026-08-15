@@ -82,7 +82,7 @@ function loadComments(postCommentPath) {
     }
 };
 ``` 
-2. 해당 코드를 살펴보니, 동적으로 <p>태그 (comment내용)에만 `escapeHTML`이라는 function을 적용하여 `innerHTML`에 삽입하고 있다.
+2. 해당 코드를 살펴보니, 동적으로 `<p>태그(comment내용)` 에만 `escapeHTML`이라는 function을 적용하여 `innerHTML`에 삽입하고 있다.
 3. `escapeHTML`함수의 문제점은 replace 함수를 적용하면서도 재귀적이지 않아 `<`와 `>` 태그를 한개씩만 인코딩할 뿐 2개씩 이상 받을 때는 모두 인코딩하지 못 한다는 것이다.
 4. 만약 `<><>` 이렇게 입력을 준다면? `&lt;&gt;<>` 이렇게 된다는 점이 문제이다.
 5. 페이로드는 다음과 같다. `<><img src=1 onerror=alert()>`
