@@ -10,15 +10,15 @@ To solve this lab, perform a cross-site scripting attack that executes an Angula
 1. 해당 문제는 `<>`가 인코딩되지만 AngularJS의 `ng-app`속성을 사용할 때 스크립트를 실행시키는 랩.
 2. AngularJS에서는 `ng-app` 속성을 적용시키면 `{{ AngularJS의 표현식 }}`를 이용해 스크립트를 실행할 수 있다.
 3. 임의의 문자열인 `exam`을 search 해본다. -> HTML 소스를 살펴보면 body태그에 `ng-app` 속성이 지정되어 있다.
-4. `exam`은 h1태그 내부에 반영되어 나타나고 있다. `{{ 1+3 }}`을 search해보면 4로 잘 반영되어 나타난다.
+4. `exam`은 h1태그 내부에 반영되어 나타나고 있다. `{{ 1+3 }}`을 search해보면 4로 잘 반영되어 나타난다.`{{ }}`에 대한 인코딩은 전혀 구현되어 있지 않음..
 5. AngularJS 표현식 에서는 컨트롤러의 스코프에 정의되지 않은 Javascript의 함수를 호출할 수는 없다. (컨트롤러내부의 $scope에 $scope.함수이름 = function(){...} 이런 식으로 정의되어 있어야 함)
 6. 페이로드 작성
 7. {{ alert() }} X
 8. {{ function('alert()')() }} X
 9. 우회해야 함. `constructor` 라는 JS의 기본 프로퍼티를 사용. 만약 빈 문자열에 `''.constructor` 를 주면 `String` 이 되고, String타입.constructor는 `function`이 된다.
 10. 그렇다면 `{{ ''.constructor.constructor('alert()')() }}`를 search 한다면 solve
-+ 구버전의 AngularJS라 가능한 우회였음.
+
 
 
 ### 💡 취약점 원리
- 고전적인 AngularJS에서 발생할 수 있는 DOM XSS 취약점
+ SSTI(Server-Side Template Injection). 사용자로 부터 입력받은 값을 페이지에 반영할 때에는 충분한 검증이 있어야 하는데, {{ }}에 대한 검증이 없어 우회가능했음.
