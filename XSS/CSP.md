@@ -29,7 +29,7 @@
 
 - 외부 스크립트의 허용 출처로 `CDN`을 줄 경우, 고객별 URL을 사용하지 않는 CDN이라면 제 3자로부터 업로드된 악성 스크립트 또한 허용 되기에 주의해야 한다.
 - CSP가 <script>태그를 막는 것은 일반적이지만 많은 CSP가 이미지 요청을 하는 것은 허용하고 있다.즉, 이미지 태그를 이용해 외부서버로 CSRF토큰 같은 민감한 정보를 유출하는 것이 가능하다. 따라서 `img-src` 설정에 유의할 것.
-- 일부 정책은 매우 엄격하여 외부요청을 모든 형태의 외부요청을 막지만, 사용자 상호작용을 유도하여 이러한 제한을 우회하는 방법도 존재한다. [엄격한 CSP 우회]([https://not](https://github.com/wannabb/PortSwiggerWebSecurityAcademy/blob/main/XSS/%F0%9F%8F%B4Lab%3A%20Reflected%20XSS%20protected%20by%20very%20strict%20CSP%2C%20with%20dangling%20markup%20attack.md))
+- 일부 정책은 매우 엄격하여 외부요청을 모든 형태의 외부요청을 막지만, 사용자 상호작용을 유도하여 이러한 제한을 우회하는 방법도 존재한다. [엄격한CSP우회](https://github.com/wannabb/PortSwiggerWebSecurityAcademy/blob/main/XSS/%F0%9F%8F%B4Lab%3A%20Reflected%20XSS%20protected%20by%20very%20strict%20CSP%2C%20with%20dangling%20markup%20attack.md)
 
 - 엣지브라우저에서는 유효하지 않은 CSP정책을 받을 때 전채 CSP를 무시하는 특징 존재
 - 가끔 `report-uri` directive 를 이용해 사용자가 입력한 값이 정책에 반영되는 웹사이트도 존재한다.
