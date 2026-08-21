@@ -33,4 +33,4 @@
 
 - 엣지브라우저에서는 유효하지 않은 CSP정책을 받을 때 전채 CSP를 무시하는 특징 존재
 - 가끔 `report-uri` directive 를 이용해 사용자가 입력한 값이 정책에 반영되는 웹사이트도 존재한다.
-- 크롬의 경우 `script-src-elem` directive가 존재하는데 이건 뒤에 입력되어도 앞에 입력된 `script-src`의 <script> 태그 제어를 덮을 수 있다. `script-src "unsafe-inline"`이라면 인라인 스크립트를 허용하도록 정책을 덮어쓸 수 있다. [활용 심화 랩](https://dd)
+- 크롬의 경우 `script-src-elem` directive가 존재하는데 이건 뒤에 입력되어도 앞에 입력된 `script-src`의 <script> 태그 제어를 덮을 수 있다. `script-src "unsafe-inline"`이라면 인라인 스크립트를 허용하도록 정책을 덮어쓸 수 있다. [활용 심화 랩](https://github.com/wannabb/PortSwiggerWebSecurityAcademy/blob/main/XSS/%F0%9F%8F%B4Lab%3A%20Reflected%20XSS%20protected%20by%20CSP%2C%20with%20CSP%20bypass.md)
