@@ -63,7 +63,7 @@ Content-Length: 24
 ```
 6. `Referer` 헤더가 존재하지 않는 경우도 검증이 이루어지고 있음. 
 7. 기존 `Referer`의 값을 여러번 수정해본 끝에 `0afa00920458263f8064442a00f80049.web-security-academy.net/` 이라는 서브도메인이 포함되어있어야 검증을 통과시킨다는 것을 확인함.
-8. 그렇다면 공격서버의 도메인에 쿼리스트링을 포함하여 `공격서버/?{0afa00920458263f8064442a00f80049.web-security-academy.net/ url인코딩 해서 넣으시고}` 으로 만들고 이 full URL을 HTTP 요청의 `Referer` 헤더에 넣도록 `<meta>` 태그를 이용해 설정하자.
+8. 그렇다면 공격서버의 도메인에 쿼리스트링을 이용하여 `0afa00920458263f8064442a00f80049.web-security-academy.net/`을 포함시키고 이 full URL을 HTTP 요청의 `Referer` 헤더에 넣도록 `<meta>` 태그를 이용해 설정하자.
 
 > [!NOTE]
 > Referer의 content로 unsafe-url을 주면 전체 URL을 Referer헤더에 포함시킨다.
