@@ -35,7 +35,7 @@ Priority: u=0, i
 
 email=a%40d
 ```
-3. 세션 쿠키와 변경할 email값을 포함시켜 보내고 있다. 그리고 `Referer`헤더가 존재한다. 이 요청을 리피터로 보내 `Referer` 헤더를 임의의 값으로 조작해본다. 그렇다면 다음과 같은 응답을 받을 수 있다.
+4. 세션 쿠키와 변경할 email값을 포함시켜 보내고 있다. 그리고 `Referer`헤더가 존재한다. 이 요청을 리피터로 보내 `Referer` 헤더를 임의의 값으로 조작해본다. 그렇다면 다음과 같은 응답을 받을 수 있다.
 ```http
 HTTP/2 400 Bad Request
 Content-Type: application/json; charset=utf-8
@@ -44,9 +44,9 @@ Content-Length: 24
 
 "Invalid referer header"
 ```
-4. 문제의 제목에서 힌트를 줬듯이, 아예 `Referer` 헤더를 제거해보자. -> 성공적으로 이메일이 변경됨.
-5. 세션 쿠키는 `SameSite=None`이라 크로스오리진의 요청에서도 포함이 되기에 고려할 필요없고, 중요한건 `Referer` 헤더를 포함시키지 않으면서 이메일 API에 POST 요청을 보내도록 하는것. <meta name='referrer-policy'
-6. PoC 스크립트 작성.
+5. 문제의 제목에서 힌트를 줬듯이, 아예 `Referer` 헤더를 제거해보자. -> 성공적으로 이메일이 변경됨.
+6. 세션 쿠키는 `SameSite=None`이라 크로스오리진의 요청에서도 포함이 되기에 고려할 필요없고, 중요한건 `Referer` 헤더를 포함시키지 않으면서 이메일 API에 POST 요청을 보내도록 하는 것.
+7. PoC 스크립트 작성.
 ```html
 <html>
     <head>
