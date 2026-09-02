@@ -16,7 +16,7 @@ PortSwigger Web Security Academy의 모든 주제와 랩(Lab) 풀이 과정을 �
 
 ### 1. Server-side vulnerabilities
 - [x] **SQL injection**
-- [ ] **Authentication**
+- [ ] **Authentication** - 진행중...
 - [x] **Path traversal**
 - [ ] **Command injection**
 - [ ] **Business logic vulnerabilities**
