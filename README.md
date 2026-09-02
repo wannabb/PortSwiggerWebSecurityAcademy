@@ -6,10 +6,11 @@ PortSwigger Web Security Academy의 모든 주제와 랩(Lab) 풀이 과정을 �
 ---
 
 ## 📊 진행 상황 (Progress)
-- **Apprentice (초급):** 0 / 0
-- **Practitioner (중급):** 0 / 0
-- **Expert (고급):** 0 / 0
-
+```diff
++ Apprentice (초급):   27 / 61
++ Practitioner (중급): 57 / 173
++ Expert (고급):        4 / 39
+```
 ---
 
 ## 📚 주제별 학습 및 랩 풀이 (Topics & Labs)
