@@ -55,7 +55,7 @@ You can log in to your own account using the following credentials: wiener:peter
 
 </html>
 ```
-6. 랩 제목 안 읽고 진행해서 그런지 잠깐 막혔었음. 해당 랩은 frame burster script가 존재함.
+6. 랩 제목 안 읽고 진행해서 그런지 잠깐 막혔었음. 해당 랩은 frame buster script가 존재함.
 ```javascript
 
 if(top != self) {
