@@ -17,7 +17,7 @@ PortSwigger Web Security Academy의 모든 주제와 랩(Lab) 풀이 과정을 �
 
 ### 1. Server-side vulnerabilities
 - [x] **SQL injection**
-- [ ] **Authentication** - 진행중...
+- [x] **Authentication** 
 - [x] **Path traversal**
 - [ ] **Command injection**
 - [ ] **Business logic vulnerabilities**
@@ -31,9 +31,9 @@ PortSwigger Web Security Academy의 모든 주제와 랩(Lab) 풀이 과정을 �
 - [x] **Cross-site scripting (XSS)**
 - [x] **Cross-site request forgery (CSRF)**
 - [x] **Cross-origin resource sharing (CORS)**
-- [ ] **Clickjacking**
+- [x] **Clickjacking**
 - [ ] **DOM-based vulnerabilities**
-- [ ] **WebSockets**
+- [x] **WebSockets**
 
 ### 3. Advanced topics
 - [ ] **Insecure deserialization**
